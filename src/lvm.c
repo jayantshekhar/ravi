@@ -1326,38 +1326,26 @@ int luaV_execute (lua_State *L) {
         vmbreak;
       }
       vmcase(OP_LT) {
-        TValue *rb = RKB(i);
-        TValue *rc = RKC(i);
-        int res;
-        if (ttisinteger(rb) && ttisinteger(rc))
-          res = (ivalue(rb) < ivalue(rc));
-        else Protect(
-          res = luaV_lessthan(L, rb, rc);
-        )
-        if (res != GETARG_A(i))
-          pc++;
-        else
-          donextjump(ci);
+        Protect(
+          if (luaV_lessthan(L, RKB(i), RKC(i)) != GETARG_A(i))
+            pc++;
+          else
+            donextjump(ci);
+	)
         vmbreak;
       }
       vmcase(OP_LE) {
-        TValue *rb = RKB(i);
-        TValue *rc = RKC(i);
-        int res;
-        if (ttisinteger(rb) && ttisinteger(rc))
-          res = (ivalue(rb) <= ivalue(rc));
-        else Protect(
-          res = luaV_lessequal(L, rb, rc);
+	Protect(
+          if (luaV_lessequal(L, RKB(i), RKC(i)) != GETARG_A(i))
+            pc++;
+          else
+            donextjump(ci);
         )
-        if (res != GETARG_A(i))
-          pc++;
-        else
-          donextjump(ci);
         vmbreak;
       }
       vmcase(OP_TEST) {
         if (GETARG_C(i) ? l_isfalse(ra) : !l_isfalse(ra))
-            pc++;
+          pc++;
         else
           donextjump(ci);
         vmbreak;
