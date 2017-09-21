@@ -607,7 +607,7 @@ void luaK_dischargevars (FuncState *fs, expdesc *e) {
         /* Check that we have a short string constant */
         else if (e->ravi_type == RAVI_TTABLE && e->u.ind.key_type == RAVI_TSTRING && isshortstr(fs, e->u.ind.idx))
           op = OP_RAVI_GETTABLE_S;
-        else if (e->ravi_type == RAVI_TTABLE && e->u.ind.key_type == RAVI_TNUMINT)
+        else if (/* e->ravi_type == RAVI_TTABLE &&*/  e->u.ind.key_type == RAVI_TNUMINT)
           op = OP_RAVI_GETTABLE_I;
         else if (e->u.ind.key_type == RAVI_TSTRING && isshortstr(fs, e->u.ind.idx))
           op = OP_RAVI_GETTABLE_SK;
@@ -621,7 +621,10 @@ void luaK_dischargevars (FuncState *fs, expdesc *e) {
       }
       else {
         lua_assert(e->u.ind.vt == VUPVAL);
-        op = OP_GETTABUP;  /* 't' is in an upvalue */
+        if (e->u.ind.key_type == RAVI_TSTRING && isshortstr(fs, e->u.ind.idx))
+          op = OP_RAVI_GETTABUP_SK;
+        else
+          op = OP_GETTABUP;  /* 't' is in an upvalue */
       }
       e->u.info = luaK_codeABC(fs, op, 0, e->u.ind.t, e->u.ind.idx);
       e->k = VRELOCABLE;
@@ -958,7 +961,7 @@ void luaK_storevar (FuncState *fs, expdesc *var, expdesc *ex) {
           else
             /* input value is known to be integer */
             op = OP_RAVI_SETTABLE_AII;
-        } else if (var->ravi_type == RAVI_TTABLE && var->u.ind.key_type == RAVI_TNUMINT) {
+        } else if (/* var->ravi_type == RAVI_TTABLE &&*/ var->u.ind.key_type == RAVI_TNUMINT) {
           /* table with integer key */
           op = OP_RAVI_SETTABLE_I;
         } else if (var->ravi_type == RAVI_TTABLE && var->u.ind.key_type == RAVI_TSTRING && isshortstr(fs, var->u.ind.idx)) {
