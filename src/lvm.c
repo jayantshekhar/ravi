@@ -1052,7 +1052,7 @@ void luaV_finishOp (lua_State *L) {
  /* fetch an instruction and prepare its execution */
 #define vmfetch(op, prevop)	{ \
   i = *(pc++); \
-  if (mask) \
+  if (RAVI_UNLIKELY(mask)) \
     Protect(luaG_traceexec(L)); \
   op = GET_OPCODE(i); \
   if (prevop != -1) raviV_add_profiledata(L, prevop); \
@@ -1064,7 +1064,7 @@ void luaV_finishOp (lua_State *L) {
 /* fetch an instruction and prepare its execution */
 #define vmfetch(op, prevop)	{ \
   i = *(pc++); \
-  if (mask) \
+  if (RAVI_UNLIKELY(mask)) \
     Protect(luaG_traceexec(L)); \
   op = GET_OPCODE(i); \
   ra = RA(i); /* WARNING: any stack reallocation invalidates 'ra' */ \
